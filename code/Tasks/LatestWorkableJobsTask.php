@@ -33,7 +33,7 @@ class LatestWorkableJobsTask extends BuildTask
 
         if ($jobs && $jobs->count()) {
             $cacheKey = 'FullJobs' . implode('-', $params);
-            $cache = Injector::inst()->get(CacheInterface::class . '.workable');
+            $cache = singleton(Workable::class)->getCache();
 
             if ($cache->has($cacheKey)) {
                 $output = $jobs->count() . " total jobs saved successfully";
@@ -41,7 +41,5 @@ class LatestWorkableJobsTask extends BuildTask
         }
 
         echo $output;
-
-        return;
     }
 }
