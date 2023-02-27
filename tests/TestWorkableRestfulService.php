@@ -10,13 +10,12 @@ class TestWorkableRestfulService extends Client
 {
     public function request(string $method, $uri = '', array $options = []): ResponseInterface
     {
-        $params = isset($options['query']) ?? [];
         switch ($uri) {
             case 'jobs':
-                return $this->getMockJobs($params);
+                return $this->getMockJobs($options);
             case 'jobs/GROOV001':
             case 'jobs/GROOV002':
-                return $this->getMockJob($uri, $params);
+                return $this->getMockJob($uri, $options);
         }
     }
 
