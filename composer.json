@@ -21,5 +21,11 @@
       "homepage": "https://github.com/torque-foxes",
       "email" : "torque-foxues@silverstripe.com"
     }
-  ]
+  ],
+  "autoload": {
+    "psr-4": {
+      "SilverStripe\\Workable\\": "src/",
+      "SilverStripe\\Workable\\Tests\\": "tests/"
+    }
+  }
 }

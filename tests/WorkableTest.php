@@ -20,7 +20,7 @@ use SilverStripe\Workable\WorkableResult;
 
 class WorkableTest extends SapphireTest
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         Workable::config()->set('subdomain', 'example');
@@ -29,7 +29,7 @@ class WorkableTest extends SapphireTest
         Config::inst()->merge(Injector::class, 'GuzzleHttp\ClientInterface.workable', $config);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         Environment::setEnv('WORKABLE_API_KEY', 'test');
