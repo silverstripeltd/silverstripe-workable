@@ -4,17 +4,19 @@ namespace SilverStripe\Workable\Tests;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class TestWorkableRestfulService extends Client
 {
-    public function request($method, $url = '', $params = [])
+    public function request(string $method, $uri = '', array $options = []): ResponseInterface
     {
-        switch ($url) {
+        $params = isset($options['query']) ?? [];
+        switch ($uri) {
             case 'jobs':
                 return $this->getMockJobs($params);
             case 'jobs/GROOV001':
             case 'jobs/GROOV002':
-                return $this->getMockJob($url, $params);
+                return $this->getMockJob($uri, $params);
         }
     }
 

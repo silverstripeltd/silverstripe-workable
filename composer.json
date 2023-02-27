@@ -27,5 +27,11 @@
       "SilverStripe\\Workable\\": "src/",
       "SilverStripe\\Workable\\Tests\\": "tests/"
     }
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "silverstripe/vendor-plugin": true
+    }
   }
 }

@@ -1,0 +1,17 @@
+.DS_Store
+/.env
+/.idea
+/node_modules/
+/public/_resources/
+/public/assets/
+/silverstripe-cache/
+/vendor/
+/app/_config/custom.yml
+/.vscode/
+/.nyc_output
+/.graphql-generated
+/public/_graphql
+/silverstripe.log
+/yarn-error.log
+.phpunit.result.cache
+/resources/
