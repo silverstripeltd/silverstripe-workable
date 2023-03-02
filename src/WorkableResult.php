@@ -12,19 +12,16 @@ class WorkableResult extends ViewableData
 {
     /**
      * Raw data from the API
-     * @var array
      */
-    protected $apiData;
+    protected array $apiData = [];
 
     /**
      * Magic getter that converts SilverStripe $UpperCamelCase to snake_case
      * e.g. $FullTitle gets full_title. You can also use dot-separated syntax, e.g. $Location.City
-     * @param  string $prop
-     * @return mixed
      */
-    public function __get($prop)
+    public function __get($prop): mixed
     {
-        $snaked = ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $prop)), '_');
+        $snaked = strtolower(ltrim(preg_replace('/[A-Z]/', '_$0', $prop), '_'));
 
         $data = $this->apiData[$snaked] ?? null;
 
@@ -37,10 +34,11 @@ class WorkableResult extends ViewableData
 
     /**
      * constructor
-     * @param array $apiData
      */
-    public function __construct($apiData = [])
+    public function __construct(array $apiData = [])
     {
+        parent::__construct();
+
         $this->apiData = $apiData;
     }
 }

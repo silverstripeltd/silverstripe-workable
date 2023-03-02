@@ -2,9 +2,7 @@
 
 namespace SilverStripe\Workable;
 
-use GuzzleHttp\ClientInterface;
 use RuntimeException;
-use SilverStripe\Workable\Workable;
 use SilverStripe\Core\Injector\Factory;
 
 /**
@@ -19,20 +17,18 @@ class WorkableRestfulServiceFactory implements Factory
 {
     /**
      * Set via ENV variable WORKABLE_API_KEY (see config.yml)
-     * @var string
      */
-    private $apiKey;
+    private ?string $apiKey;
 
     public function __construct(?string $apiKey)
     {
         $this->apiKey = $apiKey;
     }
+
     /**
      * Create the RestfulService (or whatever dependency you've injected)
      *
      * @throws RuntimeException
-     *
-     * @return ClientInterface
      */
     public function create($service, array $params = [])
     {

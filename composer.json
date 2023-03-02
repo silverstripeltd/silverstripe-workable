@@ -1,37 +1,43 @@
 {
-  "name":"silverstripe/workable",
-  "type": "silverstripe-vendormodule",
-  "description": "Adds Workable API integration to SilverStripe projects",
-  "keywords": ["silverstripe"],
-  "license": "BSD-3-Clause",
-  "homepage": "https://github.com/silverstripe/workable/",
-  "require": {
-    "silverstripe/framework": "^4",
-    "guzzlehttp/guzzle": "^7",
-    "php": ">=7.1"
-  },
-  "authors":[
-    {
-      "name": "Aaron Carlino",
-      "homepage": "http://leftandmain.com",
-      "email" : "aaron@silverstripe.com"
+    "name": "silverstripe/workable",
+    "type": "silverstripe-vendormodule",
+    "description": "Adds Workable API integration to SilverStripe projects",
+    "keywords": [
+        "silverstripe"
+    ],
+    "license": "BSD-3-Clause",
+    "homepage": "https://github.com/silverstripe/workable/",
+    "require": {
+        "php": "^8.1",
+        "silverstripe/framework": "^5"
     },
-    {
-      "name": "Torque Foxes",
-      "homepage": "https://github.com/torque-foxes",
-      "email" : "torque-foxues@silverstripe.com"
+    "require-dev": {
+        "silverstripe/recipe-testing": "^3",
+        "squizlabs/php_codesniffer": "^3"
+    },
+    "authors": [
+        {
+            "name": "Aaron Carlino",
+            "homepage": "http://leftandmain.com",
+            "email": "aaron@silverstripe.com"
+        },
+        {
+            "name": "Torque Foxes",
+            "homepage": "https://github.com/torque-foxes",
+            "email": "torque-foxues@silverstripe.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "SilverStripe\\Workable\\": "src/",
+            "SilverStripe\\Workable\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "test": "phpunit -d memory_limit=512M -d flush=1",
+        "phpcs": "phpcs src tests --standard=phpcs.xml --extensions=php --encoding=utf-8",
+        "phpcbf": "phpcbf src tests --standard=phpcs.xml --extensions=php --encoding=utf-8"
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "SilverStripe\\Workable\\": "src/",
-      "SilverStripe\\Workable\\Tests\\": "tests/"
-    }
-  },
-  "config": {
-    "allow-plugins": {
-      "composer/installers": true,
-      "silverstripe/vendor-plugin": true
-    }
-  }
 }

@@ -1,5 +1,0 @@
-mappings:
-  WorkableTest: SilverStripe\Workable\WorkableTest
-  Workable: SilverStripe\Workable\Workable
-  Workable_Result: SilverStripe\Workable\WorkableResult
-  WorkableRestfulServiceFactory: SilverStripe\Workable\WorkableRestfulServiceFactory
