@@ -2,20 +2,11 @@
 
 namespace SilverStripe\Workable\Tests;
 
-use GuzzleHttp\ClientInterface;
-use Psr\Log\LoggerInterface;
-use Psr\SimpleCache\CacheInterface;
-use SilverStripe\Config\Collections\CachedConfigCollection;
-use SilverStripe\Core\Cache\DefaultCacheFactory;
 use SilverStripe\Core\Environment;
-use SilverStripe\Core\Injector\InjectorLoader;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\Versioned\Caching\VersionedCacheAdapter;
-use SilverStripe\Workable\Tests\TestWorkableRestfulService;
 use SilverStripe\Workable\Workable;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Workable\WorkableRestfulServiceFactory;
 use SilverStripe\Workable\WorkableResult;
 
 class WorkableTest extends SapphireTest
@@ -35,30 +26,30 @@ class WorkableTest extends SapphireTest
         Environment::setEnv('WORKABLE_API_KEY', 'test');
     }
 
-    public function testThrowsIfNoSubdomain()
+    public function testThrowsIfNoSubdomain(): void
     {
         Config::inst()->remove(Workable::class, 'subdomain');
-        $this->setExpectedException('RuntimeException');
+        $this->expectException('RuntimeException');
 
         Workable::create()->callHttpClient('test');
     }
 
-    public function testThrowsIfNoApiKey()
+    public function testThrowsIfNoApiKey(): void
     {
-        Environment::setEnv('WORKABLE_API_KEY', null);
-        $this->setExpectedException('RuntimeException');
+        Environment::setEnv('WORKABLE_API_KEY', '');
+        $this->expectException('RuntimeException');
 
         Workable::create()->callHttpClient('test');
     }
 
-    public function testConvertsSnakeCase()
+    public function testConvertsSnakeCase(): void
     {
         $data = WorkableResult::create(['snake_case' => 'foo']);
 
         $this->assertEquals('foo', $data->SnakeCase);
     }
 
-    public function testAcceptsDotSyntax()
+    public function testAcceptsDotSyntax(): void
     {
         $data = WorkableResult::create(['snake_case' => ['nested_property' => 'foo']]);
         $result = $data->SnakeCase;
@@ -66,7 +57,7 @@ class WorkableTest extends SapphireTest
         $this->assertEquals('foo', $result->NestedProperty);
     }
 
-    public function testGetJobs()
+    public function testGetJobs(): void
     {
         $data = Workable::create()->getJobs();
 
@@ -75,14 +66,14 @@ class WorkableTest extends SapphireTest
         $this->assertEquals('Job 2', $data[1]->title);
     }
 
-    public function testGetJobsWithDraftState()
+    public function testGetJobsWithDraftState(): void
     {
         $data = Workable::create()->getJobs(['state' => 'draft']);
 
         $this->assertCount(1, $data);
     }
 
-    public function testGetJob()
+    public function testGetJob(): void
     {
         $data = Workable::create()->getJob('GROOV001');
 
@@ -91,7 +82,7 @@ class WorkableTest extends SapphireTest
         $this->assertEquals('GROOV001', $data->shortcode);
     }
 
-    public function testGetJobWithDraftState()
+    public function testGetJobWithDraftState(): void
     {
         $data = Workable::create()->getJob('GROOV001', ['state' => 'draft']);
 
@@ -100,7 +91,7 @@ class WorkableTest extends SapphireTest
         $this->assertEquals('GROOV001', $data->shortcode);
     }
 
-    public function testFullJobs()
+    public function testFullJobs(): void
     {
         $data = Workable::create()->getFullJobs();
 
@@ -111,7 +102,7 @@ class WorkableTest extends SapphireTest
         $this->assertEquals('GROOV002', $data[1]->shortcode);
     }
 
-    public function testFullJobsWithDraftState()
+    public function testFullJobsWithDraftState(): void
     {
         $data = Workable::create()->getFullJobs(['state' => 'draft']);
 

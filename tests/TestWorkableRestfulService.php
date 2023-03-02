@@ -19,10 +19,9 @@ class TestWorkableRestfulService extends Client
         }
     }
 
-    protected function getMockJobs($params)
+    protected function getMockJobs(array $params): Response
     {
-        $state = isset($params['query']['state']) ? $params['query']['state'] : '';
-        $response = [];
+        $state = $params['query']['state'] ?? '';
 
         switch ($state) {
             case 'draft':
@@ -50,10 +49,9 @@ class TestWorkableRestfulService extends Client
         return new Response(200, [], json_encode($response));
     }
 
-    protected function getMockJob($url, $params)
+    protected function getMockJob(string $url, array $params): Response
     {
-        $state = isset($params['query']['state']) ? $params['query']['state'] : '';
-        $response = [];
+        $state = $params['query']['state'] ?? '';
 
         switch ($state) {
             case 'draft':

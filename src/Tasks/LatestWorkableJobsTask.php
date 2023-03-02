@@ -2,9 +2,7 @@
 
 namespace SilverStripe\Workable\Tasks;
 
-use Psr\SimpleCache\CacheInterface;
 use SilverStripe\Dev\BuildTask;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Workable\Workable;
 
 class LatestWorkableJobsTask extends BuildTask

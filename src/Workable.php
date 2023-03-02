@@ -19,30 +19,28 @@ class Workable implements Flushable
     use Injectable;
     use Configurable;
 
+    public const CACHE_NAME = 'workable';
+
     /**
      * Reference to the HTTP Client dependency
-     * @var ClientInterface
      */
-    private $httpClient;
+    private ClientInterface $httpClient;
 
     /**
      * Reference to the Cache dependency
-     * @var CacheInterface
      */
-    private $cache;
+    private ?CacheInterface $cache;
 
     /**
      * Subdomain for Workable API call (e.g. $subdomain.workable.com)
      * @config
      */
-    private static $subdomain;
+    private static string $subdomain = '';
 
     /**
      * Constructor, inject the restful service dependency
-     * @param ClientInterface $httpClient
-     * @param CacheInterface $cache
      */
-    public function __construct(ClientInterface $httpClient, CacheInterface $cache)
+    public function __construct(ClientInterface $httpClient, CacheInterface $cache = null)
     {
         $this->httpClient = $httpClient;
         $this->cache = $cache;
@@ -50,9 +48,9 @@ class Workable implements Flushable
 
     /**
      * Gets all the jobs from the Workable API
-     * @param  array  $params Array of params, e.g. ['state' => 'published'].
+     * @param array $params Array of params, e.g. ['state' => 'published'].
      *                        see https://workable.readme.io/docs/jobs for full list of query params
-     * @return ArrayList
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function getJobs(array $params = []): ArrayList
     {
@@ -80,10 +78,10 @@ class Workable implements Flushable
 
     /**
      * Gets information on a specific job form the Workable API
-     * @param  string $shortcode Workable shortcode for the job, e.g. 'GROOV005'
-     * @param  array  $params    Array of params, e.g. ['state' => 'published'].
+     * @param string $shortcode Workable shortcode for the job, e.g. 'GROOV005'
+     * @param array $params Array of params, e.g. ['state' => 'published'].
      *                           see https://workable.readme.io/docs/jobs for full list of query params
-     * @return WorkableResult|null
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function getJob(string $shortcode, array $params = []): ?WorkableResult
     {
@@ -107,11 +105,11 @@ class Workable implements Flushable
     /**
      * Gets all the jobs from the workable API, populating each job with its full data
      * Note: This calls the API multiple times so should be used with caution
-     * @param  array  $params Array of params, e.g. ['state' => 'published'].
+     * @param array $params Array of params, e.g. ['state' => 'published'].
      *                        see https://workable.readme.io/docs/jobs for full list of query params
-     * @return ArrayList
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function getFullJobs($params = [])
+    public function getFullJobs(array $params = []): ArrayList
     {
         $cacheKey = 'FullJobs' . implode('-', $params);
 
@@ -139,84 +137,82 @@ class Workable implements Flushable
 
     /**
      * Sends request to Workable API.
-     * Should it exceed the rate limit, this is caught and put to sleep until the next interval. 
-     * The interval duration is provided by Workable via a header. 
+     * Should it exceed the rate limit, this is caught and put to sleep until the next interval.
+     * The interval duration is provided by Workable via a header.
      * When its awaken, it will call itself again, this repeats until its complete.
      * This returns a json body from the response.
-     * 
+     *
      * Note: See rate limit docs from Workable https://workable.readme.io/docs/rate-limits
-     * @param  string $url
-     * @param  array  $params
-     * @param  string $method
      *
      * @throws RequestException if client is not configured correctly, handles 429 error
-
-     * @return array  JSON as array
+     * @throws \JsonException from json_decode
+     * @throws \Psr\Container\NotFoundExceptionInterface from Injector
+     * @throws \GuzzleHttp\Exception\GuzzleException from $this->httpClient->request
      */
     public function callWorkableApi(string $url, array $params = [], string $method = 'GET'): array
     {
         try {
             $response = $this->httpClient->request($method, $url, ['query' => $params]);
-            return json_decode($response->getBody(), true);
-        } 
-        catch(RequestException $e){
-            if($e->hasResponse()){
+            return json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (RequestException $e) {
+            if ($e->hasResponse()) {
                 $errorResponse = $e->getResponse();
                 $statusCode = $errorResponse->getStatusCode();
 
-                if($statusCode === 429) {
+                if ($statusCode === 429) {
                     Injector::inst()->get(LoggerInterface::class)->info(
                         'Rate limit exceeded - sleeping until next interval'
                     );
 
-                    $this->sleepUntil($errorResponse->getHeader('X-Rate-Limit-Reset'));
+                    $this->sleepUntil((array) $errorResponse->getHeader('X-Rate-Limit-Reset'));
 
                     return $this->callWorkableApi($url, $params, $method);
                 }
-                else {
-                    Injector::inst()->get(LoggerInterface::class)->warning(
-                        'Failed to retrieve valid response from workable',
-                        ['exception' => $e]
-                    );
 
-                    throw $e;
-                }
+                Injector::inst()->get(LoggerInterface::class)->warning(
+                    'Failed to retrieve valid response from workable',
+                    ['exception' => $e]
+                );
+
+                throw $e;
             }
         }
+
+        return [];
     }
 
     /**
-     * Sleeps until the next interval. 
+     * Sleeps until the next interval.
      * Should the interval header be empty, the script sleeps for 10 seconds - Workable's default interval.
-     * @param array $resetIntervalHeader
      */
-    private function sleepUntil($resetIntervalHeader){
+    private function sleepUntil(array $resetIntervalHeader): void
+    {
         $defaultSleepInterval = 10;
 
-        if(!empty($resetIntervalHeader)){
+        if (!empty($resetIntervalHeader)) {
             time_sleep_until($resetIntervalHeader[0]);
-        }
-        else {
+        } else {
             sleep($defaultSleepInterval);
         }
     }
 
     /**
      * Flush any cached data
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public static function flush()
     {
-        Injector::inst()->get(CacheInterface::class . '.workable')->clear();
+        Injector::inst()->get(CacheInterface::class . '.' . self::CACHE_NAME)->clear();
     }
 
     /**
      * Gets any cached data. If there is no cached data, a blank cache is created.
-     * @return CacheInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function getCache(): CacheInterface
     {
-        if (!$this->cache) {
-            $this->setCache(Injector::inst()->get(CacheInterface::class . '.workable'));
+        if (!$this->cache instanceof CacheInterface) {
+            $this->setCache(Injector::inst()->get(CacheInterface::class . '.'. self::CACHE_NAME));
         }
 
         return $this->cache;
@@ -224,8 +220,6 @@ class Workable implements Flushable
 
     /**
      * Sets the cache.
-     * @param CacheInterface $cache
-     * @return self
      */
     public function setCache(CacheInterface $cache): self
     {

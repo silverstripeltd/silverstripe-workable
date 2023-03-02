@@ -1,5 +1,5 @@
-# Workable for SilverStripe
-Adds Workable API integration to SilverStripe projects. See https://workable.readme.io/ for API docs.
+# Workable for Silverstripe
+Adds Workable API integration to Silverstripe projects. See https://workable.readme.io/ for API docs.
 
 ## Configuration
 First, add your API key using a constant, preferably in your `.env` file.
