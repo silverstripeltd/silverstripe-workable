@@ -8,11 +8,11 @@
     "license": "BSD-3-Clause",
     "homepage": "https://github.com/silverstripe/workable/",
     "require": {
-        "php": "^8.1",
-        "silverstripe/framework": "^5"
+        "php": "^8.3",
+        "silverstripe/framework": "^6"
     },
     "require-dev": {
-        "silverstripe/recipe-testing": "^3",
+        "silverstripe/recipe-testing": "^4",
         "squizlabs/php_codesniffer": "^3"
     },
     "authors": [
@@ -39,5 +39,18 @@
         "test": "phpunit -d memory_limit=512M -d flush=1",
         "phpcs": "phpcs src tests --standard=phpcs.xml --extensions=php --encoding=utf-8",
         "phpcbf": "phpcbf src tests --standard=phpcs.xml --extensions=php --encoding=utf-8"
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "silverstripe/vendor-plugin": true,
+            "silverstripe/recipe-plugin": true
+        }
+    },
+    "extra": {
+        "project-files-installed": [
+            "behat.yml",
+            "phpunit.xml.dist"
+        ]
     }
 }

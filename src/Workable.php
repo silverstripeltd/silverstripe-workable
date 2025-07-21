@@ -5,7 +5,7 @@ namespace SilverStripe\Workable;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Log\LoggerInterface;
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\Model\List\ArrayList;
 use SilverStripe\Core\Flushable;
 use SilverStripe\Core\Extensible;
 use Psr\SimpleCache\CacheInterface;

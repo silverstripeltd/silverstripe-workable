@@ -30,7 +30,7 @@ class WorkableRestfulServiceFactory implements Factory
      *
      * @throws RuntimeException
      */
-    public function create($service, array $params = [])
+    public function create(string $service, array $params = []): ?object
     {
 
         if (!$this->apiKey) {

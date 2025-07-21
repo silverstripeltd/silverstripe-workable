@@ -4,23 +4,27 @@ namespace SilverStripe\Workable\Tasks;
 
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Workable\Workable;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 class LatestWorkableJobsTask extends BuildTask
 {
     /**
      * @inheritdoc
      */
-    protected $title = 'Refresh cache of Workable Jobs';
+    protected string $title = 'Refresh cache of Workable Jobs';
 
     /**
      * @inheritdoc
      */
-    protected $description = 'Refresh cache of Workable Jobs';
+    protected static string $description = 'Refresh cache of Workable Jobs';
 
     /**
      * @inheritdoc
      */
-    public function run($request)
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
         Workable::flush();
 
@@ -39,5 +43,7 @@ class LatestWorkableJobsTask extends BuildTask
         }
 
         echo $output;
+
+        return Command::SUCCESS;
     }
 }

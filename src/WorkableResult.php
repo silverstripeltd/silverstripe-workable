@@ -2,13 +2,13 @@
 
 namespace SilverStripe\Workable;
 
-use SilverStripe\View\ViewableData;
+use SilverStripe\Model\ModelData;
 
 /**
  * Defines the renderable Workable data for the template. Converts UpperCamelCase properties
  * to the snake_case that comes from the API
  */
-class WorkableResult extends ViewableData
+class WorkableResult extends ModelData
 {
     /**
      * Raw data from the API
