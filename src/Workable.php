@@ -40,7 +40,7 @@ class Workable implements Flushable
     /**
      * Constructor, inject the restful service dependency
      */
-    public function __construct(ClientInterface $httpClient, CacheInterface $cache = null)
+    public function __construct(ClientInterface $httpClient, ?CacheInterface $cache = null)
     {
         $this->httpClient = $httpClient;
         $this->cache = $cache;
